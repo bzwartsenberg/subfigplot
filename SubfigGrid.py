@@ -97,7 +97,9 @@ class SubfigGrid():
         
         for label in self.labels:
             try:
-                plotfuncs[label](self.axes[label])
+                ax = plotfuncs[label](self.axes[label])
+                if ax is not None:
+                    self.axes[label + '_tw'] = ax ## add twin if function returns anything
             except KeyError as e:
                 print('No plot function found for %s or error in function' % label)
                 print('Error given %s' % e)
