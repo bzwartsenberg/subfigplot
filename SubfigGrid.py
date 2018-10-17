@@ -20,7 +20,7 @@ import bc
 class SubfigGrid():
     def __init__(self,figsizesx, figsizesy, xspaces, yspaces, labels, label_pos,plotfuncs,
                  text_params = {}, tick_params = {}, axislabel_params = {}, label_params = {},
-                 units = 'mm'):
+                 units = 'mm', custom_ax = {}):
     
         self.mm = 1/25.4
 
@@ -50,6 +50,8 @@ class SubfigGrid():
         
         self.labels = labels
         self.label_pos = dict(zip(self.labels,label_pos))
+        self.labels += list(custom_ax.keys())
+        self.custom_ax = custom_ax
 
         ##text params:
         self.labelfontsize = text_params['labelfontsize'] if 'labelfontsize' in text_params else 10
@@ -89,15 +91,18 @@ class SubfigGrid():
         
         self.fig = plt.figure(figsize = self.figsize)
         self.axes = self.make_axes()   
+
+        self.label_axes()
+        
         
         for label in self.labels:
             try:
                 plotfuncs[label](self.axes[label])
-            except KeyError:
+            except KeyError as e:
                 print('No plot function found for %s or error in function' % label)
+                print('Error given %s' % e)
                 pass
         
-        self.label_axes()
             
         if self.label_params['makelabels']:
             self.make_subfiglabels()
@@ -109,8 +114,9 @@ class SubfigGrid():
         
     def get_fig_ax_pos(self,label):
         
-        if label == 'text':
-            pos = [0,0,self.figsize[0],self.figsize[1]]
+
+        if label in self.custom_ax.keys():
+            pos = [self.uc*s for s in self.custom_ax[label]]            
         else:
             pos = []
             pos.append(sum(self.xspaces[:self.label_pos[label][0]+1])+sum(self.figsizesx[:self.label_pos[label][0]]))
@@ -137,7 +143,7 @@ class SubfigGrid():
         
     def make_subfiglabels(self):
         
-        for label in self.labels[0:len(self.label_pos)]:
+        for label in self.labels[0:len(self.label_pos)+len(self.custom_ax)]:
             bbox = self.axes[label].get_window_extent().transformed(self.fig.dpi_scale_trans.inverted())
             ax_xlim,ax_ylim = self.axes[label].get_xlim(),self.axes[label].get_ylim()
             axwidth = abs(ax_xlim[1]-ax_xlim[0])*self.label_params['bwidth']*self.uc/bbox.width
