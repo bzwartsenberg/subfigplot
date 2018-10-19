@@ -171,14 +171,18 @@ class SubfigGrid():
 
         ## the corner plot always gets labels, except if labels are set to 'none':
         whichlabels = self.axislabel_params['whichlabels']
-        for xi in range(len(self.figsizesx)):
-            for yi in range(len(self.figsizesy)):
-                
-                k,v = list(self.label_pos.keys()), list(self.label_pos.values())
-                ax = self.axes[k[v.index((xi,yi))]]
-                ax.set_xlabel(self.axislabel_params['xlabel'], fontname=self.axislabel_params['font'], fontsize=self.axislabel_params['fontsize'])                
-                ax.set_ylabel(self.axislabel_params['ylabel'], fontname=self.axislabel_params['font'], fontsize=self.axislabel_params['fontsize'])
-                
+        for l in self.labels:             
+            ax = self.axes[l]
+            ax.set_xlabel(self.axislabel_params['xlabel'], fontname=self.axislabel_params['font'], fontsize=self.axislabel_params['fontsize'])                
+            ax.set_ylabel(self.axislabel_params['ylabel'], fontname=self.axislabel_params['font'], fontsize=self.axislabel_params['fontsize'])
+            
+            if l in self.custom_ax.keys():
+                ax.set_xticklabels([])
+                ax.set_xlabel('')
+                ax.set_yticklabels([])
+                ax.set_ylabel('')                
+            else:
+                xi,yi = self.label_pos[l]
                 if whichlabels == 'none':
                     ax.set_xticklabels([])
                     ax.set_xlabel('')
