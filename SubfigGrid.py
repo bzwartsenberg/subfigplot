@@ -148,9 +148,10 @@ class SubfigGrid():
         for label in self.labels[0:len(self.label_pos)+len(self.custom_ax)]:
             bbox = self.axes[label].get_window_extent().transformed(self.fig.dpi_scale_trans.inverted())
             ax_xlim,ax_ylim = self.axes[label].get_xlim(),self.axes[label].get_ylim()
-            axwidth = abs(ax_xlim[1]-ax_xlim[0])*self.label_params['bwidth']*self.uc/bbox.width
-            axheight = abs(ax_ylim[1]-ax_ylim[0])*self.label_params['bheight']*self.uc/bbox.height
-           
+            axwidth = (ax_xlim[1]-ax_xlim[0])*self.label_params['bwidth']*self.uc/bbox.width
+            axheight = (ax_ylim[1]-ax_ylim[0])*self.label_params['bheight']*self.uc/bbox.height
+
+
             if self.label_params['loc'] == 'tl':
                 ptx,pty = (ax_xlim[0]),(ax_ylim[1]-axheight)
             elif self.label_params['loc'] == 'tr':
@@ -159,6 +160,7 @@ class SubfigGrid():
                 ptx,pty = (ax_xlim[0]),(ax_ylim[0])
             elif self.label_params['loc'] == 'br':
                 ptx,pty = (ax_xlim[1] - axwidth),(ax_ylim[0])
+
             box_props_std = dict(facecolor='white', alpha=1.0, lw = 0.5, edgecolor = 'black', zorder = 4) 
             textkwargs_std = dict(zorder = 4)
             textbox(self.axes[label],label, (ptx), (pty), axwidth, axheight, 
