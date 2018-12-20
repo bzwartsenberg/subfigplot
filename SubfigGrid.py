@@ -17,6 +17,10 @@ import bc
 
 """
 
+
+    
+
+
 class SubfigGrid():
     def __init__(self,figsizesx, figsizesy, xspaces, yspaces, labels, label_pos,plotfuncs,
                  text_params = {}, tick_params = {}, axislabel_params = {}, label_params = {},
@@ -25,6 +29,7 @@ class SubfigGrid():
         self.mm = 1/25.4
 
         print('Calculated fig size: %0.2f by %0.2f %s' % (sum(figsizesx)+sum(xspaces),sum(figsizesy)+sum(yspaces),units))
+        
         
         
         if units == 'mm':
@@ -40,6 +45,10 @@ class SubfigGrid():
         figsizey = sum(figsizesy)+sum(yspaces)
                 
         self.figsize = (figsizex,figsizey)
+        print('Fig aspect ratio: {:.2f}'.format(figsizex/figsizey))
+        asp = figsizex/figsizey
+        print('APS Words for this figure: {:.0f} for single column and {:.0f} for two column'.format((150 / asp + 20),(300 / (0.5 * asp) + 40)))
+
         
         self.units = units
 
@@ -86,11 +95,13 @@ class SubfigGrid():
         
 
         #set rc params:
+        rc('font',**{'family':'serif','serif':['Computer Modern Roman'], 'size' : self.ticklabelfontsize})
         rc('font',**{'family':'sans-serif','sans-serif':[self.font], 'size' : self.ticklabelfontsize})
-            
         
-        self.fig = plt.figure(figsize = self.figsize)
-        self.axes = self.make_axes()   
+        self.fig = plt.gcf()
+        self.fig.clear()
+        self.fig.set_size_inches(self.figsize)
+        self.axes = self.make_axes()
 
         self.label_axes()
         
@@ -112,6 +123,9 @@ class SubfigGrid():
         self.move_spines()
 
         self.remove_text_spines()
+        
+        #make a shortcut duplicate:
+        self.a = self.axes
 
         
     def get_fig_ax_pos(self,label):
@@ -143,8 +157,7 @@ class SubfigGrid():
         return axes 
         
         
-    def make_subfiglabels(self):
-        
+    def make_subfiglabels(self):        
         for label in self.labels[0:len(self.label_pos)+len(self.custom_ax)]:
             bbox = self.axes[label].get_window_extent().transformed(self.fig.dpi_scale_trans.inverted())
             ax_xlim,ax_ylim = self.axes[label].get_xlim(),self.axes[label].get_ylim()
@@ -160,6 +173,15 @@ class SubfigGrid():
                 ptx,pty = (ax_xlim[0]),(ax_ylim[0])
             elif self.label_params['loc'] == 'br':
                 ptx,pty = (ax_xlim[1] - axwidth),(ax_ylim[0])
+            elif self.label_params['loc'] == 'otl': #outside, top left
+                ptx,pty = (ax_xlim[0] - axwidth),(ax_ylim[1])
+            elif self.label_params['loc'] == 'otr': #outside, top right
+                ptx,pty = (ax_xlim[1]),(ax_ylim[1])
+            elif self.label_params['loc'] == 'obl': 
+                ptx,pty = (ax_xlim[0] - axwidth),(ax_ylim[0] - axheight)
+            elif self.label_params['loc'] == 'obr':
+                ptx,pty = (ax_xlim[1]),(ax_ylim[0] - axheight)                
+                
 
             box_props_std = dict(facecolor='white', alpha=1.0, lw = 0.5, edgecolor = 'black', zorder = 4) 
             textkwargs_std = dict(zorder = 4)
@@ -220,14 +242,15 @@ class SubfigGrid():
             self.axes['text'].axis([0.0,self.figsize[0]/self.uc,0.0,self.figsize[1]/self.uc])
 
         
-    def move_spines(self, zorder = 10):
-        for label in self.labels:
+    def move_spines(self, zorder = 10, lw = None):
+        for label in self.axes.keys():
             for loc,spine in self.axes[label].spines.items():
-                spine.set_zorder(zorder)            
+                spine.set_zorder(zorder)
+                if lw is not None:
+                    spine.set_linewidth(lw) 
 
 
-                 
-            
+ 
             
 if __name__ == '__main__':
     
