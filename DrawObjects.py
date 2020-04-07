@@ -276,35 +276,46 @@ def annotate_scatter(ax, label, atxval = None, atn = None, text = None, x_off = 
     
 def axis_corner_box(ax, text, bwidth, bheight, loc = 'tl', box_props = {}, text_props = {}, units = 'mm'):
     
-        if units == 'mm':
-            uc = 1/25.4
-        else:
-            uc = 1.
-
+    """Axis cornerbox
+    Args:
+        ax: the axis to plot on
+        text: the text to plot
+        bwidth: box width in "units"
+        bheight: box height in "units"
+        loc: location, tl (top left), tr, bl, br
+        box_props: matplotlib box properties
+        text_props: matplotlib text properties
+        units: mm or in"""
     
-        bbox = ax.get_window_extent().transformed(ax.get_figure().dpi_scale_trans.inverted())
-        ax_xlim,ax_ylim = ax.get_xlim(),ax.get_ylim()
-        axwidth = (ax_xlim[1]-ax_xlim[0])*bwidth*uc/bbox.width
-        axheight = (ax_ylim[1]-ax_ylim[0])*bheight*uc/bbox.height
+    if units == 'mm':
+        uc = 1/25.4
+    else:
+        uc = 1.
 
 
-        if loc == 'tl':
-            ptx,pty = (ax_xlim[0]),(ax_ylim[1]-axheight)
-        elif loc == 'tr':
-            ptx,pty = (ax_xlim[1] - axwidth),(ax_ylim[1]-axheight)
-        elif loc == 'bl':
-            ptx,pty = (ax_xlim[0]),(ax_ylim[0])
-        elif loc == 'br':
-            ptx,pty = (ax_xlim[1] - axwidth),(ax_ylim[0])
-            
-    
+    bbox = ax.get_window_extent().transformed(ax.get_figure().dpi_scale_trans.inverted())
+    ax_xlim,ax_ylim = ax.get_xlim(),ax.get_ylim()
+    axwidth = (ax_xlim[1]-ax_xlim[0])*bwidth*uc/bbox.width
+    axheight = (ax_ylim[1]-ax_ylim[0])*bheight*uc/bbox.height
 
-        box_props_std = dict(facecolor='white', alpha=1.0, lw = 0.5, edgecolor = 'black', zorder = 4) 
-        text_props_std = dict(zorder = 4)
-        box_props = dict(box_props_std, **box_props)
-        text_props = dict(text_props_std, **text_props)
-        textbox(ax,text, (ptx), (pty), axwidth, axheight, 
-                boxkwargs = box_props, 
-                textkwargs = text_props)
-    
+
+    if loc == 'tl':
+        ptx,pty = (ax_xlim[0]),(ax_ylim[1]-axheight)
+    elif loc == 'tr':
+        ptx,pty = (ax_xlim[1] - axwidth),(ax_ylim[1]-axheight)
+    elif loc == 'bl':
+        ptx,pty = (ax_xlim[0]),(ax_ylim[0])
+    elif loc == 'br':
+        ptx,pty = (ax_xlim[1] - axwidth),(ax_ylim[0])
+        
+    print('Making text: ', text)
+
+    box_props_std = dict(facecolor='white', alpha=1.0, lw = 0.5, edgecolor = 'black', zorder = 4) 
+    text_props_std = dict(zorder = 4)
+    box_props = dict(box_props_std, **box_props)
+    text_props = dict(text_props_std, **text_props)
+    textbox(ax,text, (ptx), (pty), axwidth, axheight, 
+            boxkwargs = box_props, 
+            textkwargs = text_props)
+
         

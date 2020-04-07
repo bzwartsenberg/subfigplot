@@ -107,15 +107,11 @@ class SubfigGrid():
         
         
         for label in self.labels:
-            try:
-                ax = plotfuncs[label](self.axes[label])
-                if ax is not None:
-                    self.axes[label + '_tw'] = ax ## add twin if function returns anything
-            except KeyError as e:
-                print('No plot function found for %s or error in function' % label)
-                print('Error given %s' % e)
-                pass
+            ax = plotfuncs[label](self.axes[label])
+            if ax is not None:
+                self.axes[label + '_tw'] = ax ## add twin if function returns anything
         
+        self.plotfuncs = plotfuncs
             
         if self.label_params['makelabels']:
             self.make_subfiglabels()
@@ -157,8 +153,11 @@ class SubfigGrid():
         return axes 
         
         
-    def make_subfiglabels(self):        
-        for label in self.labels[0:len(self.label_pos)+len(self.custom_ax)]:
+    def make_subfiglabels(self, makelabels = None):
+        if makelabels is None:
+            makelabels = self.labels[0:len(self.label_pos)+len(self.custom_ax)]
+        
+        for label in makelabels:
             bbox = self.axes[label].get_window_extent().transformed(self.fig.dpi_scale_trans.inverted())
             ax_xlim,ax_ylim = self.axes[label].get_xlim(),self.axes[label].get_ylim()
             axwidth = (ax_xlim[1]-ax_xlim[0])*self.label_params['bwidth']*self.uc/bbox.width
