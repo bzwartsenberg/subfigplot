@@ -6,7 +6,7 @@ Created on Fri Nov  9 10:43:26 2018
 @author: berend
 """
 
-from SubfigGrid import SubfigGrid
+from subfiggrid import SubfigGrid
 
 
 
@@ -87,6 +87,3 @@ class SimpleGrid(SubfigGrid):
                      units = units, custom_ax = custom_ax)
         
         self.a = self.axes
-    
-                 
-            

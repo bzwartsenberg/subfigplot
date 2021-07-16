@@ -8,7 +8,7 @@ Created on Fri Jul 20 12:31:42 2018
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rc
-from DrawObjects import textbox 
+from drawobjects import textbox
 import bc
 
 """
