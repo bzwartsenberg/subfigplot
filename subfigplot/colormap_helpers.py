@@ -44,22 +44,31 @@ def to_sym(A, vmin, vmax, zero = 0.0):
     return A/np.piecewise(A, [A < zero], [-vmin,vmax])
 
 
-def sym_colorbar(ax, vmin,vmax, cmap, zero = 0.0,  inside_labels = [], textprops = {}):
+def sym_colorbar(ax, vmin,vmax, cmap, zero=0.0,  inside_labels=[],
+                 textprops={}, horizontal=False):
     
     y = np.linspace(vmin,vmax, 200)
     x = np.linspace(-1,1,2)
+    if horizontal:
+        x, y = y, x
     
     X,Y = np.meshgrid(x,y)
-    
-    Z = to_sym(Y,vmin,vmax,zero = zero)
-    
+
+    if horizontal:
+        Z = to_sym(X,vmin,vmax,zero = zero)
+    else:
+        Z = to_sym(Y,vmin,vmax,zero = zero)
+
     X,Y = create_grid_pcolormesh(X,Y)
-    
-    
-    ax.pcolormesh(X,Y,Z,cmap = cmap, vmin = -1, vmax = 1.)
-    ax.set_xticks([])
-    ax.axis([-1,1,vmin,vmax])
-    
+
+    ax.pcolormesh(X,Y,Z,cmap = cmap, vmin = -1, vmax = 1., rasterized=True)
+    if horizontal:
+        ax.set_yticks([])
+        ax.axis([vmin, vmax, -1,1])
+    else:
+        ax.set_xticks([])
+        ax.axis([-1,1,vmin,vmax])
+
     if inside_labels:
         ylen = vmax - vmin
         
@@ -68,22 +77,31 @@ def sym_colorbar(ax, vmin,vmax, cmap, zero = 0.0,  inside_labels = [], textprops
     
     
     
-def reg_colorbar(ax, vmin,vmax, cmap, zero = 0.0, inside_labels = [], textprops = {}, norm=None):
+def reg_colorbar(ax, vmin,vmax, cmap, zero = 0.0, inside_labels = [],
+                 textprops = {}, norm=None, horizontal=False):
     
     y = np.linspace(vmin,vmax, 200)
     x = np.linspace(-1,1,2)
+    if horizontal:
+        x, y = y, x
     
     X,Y = np.meshgrid(x,y)
-    
-    Z = np.array(Y)
+
+    if horizontal:
+        Z = np.array(X)
+    else:
+        Z = np.array(Y)
     
     X,Y = create_grid_pcolormesh(X,Y)
     
-    
-    ax.pcolormesh(X,Y,Z,cmap = cmap, vmin = vmin, vmax = vmax, norm=norm)
-    ax.set_xticks([])
-    ax.axis([-1,1,vmin,vmax])    
-    
+    ax.pcolormesh(X,Y,Z,cmap = cmap, vmin = vmin, vmax = vmax, norm=norm, rasterized=True)
+    if horizontal:
+        ax.set_yticks([])
+        ax.axis([vmin, vmax, -1,1])
+    else:
+        ax.set_xticks([])
+        ax.axis([-1,1,vmin,vmax])
+
     if inside_labels:
         ylen = vmax - vmin
         

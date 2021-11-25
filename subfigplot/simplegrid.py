@@ -6,7 +6,7 @@ Created on Fri Nov  9 10:43:26 2018
 @author: berend
 """
 
-from subfiggrid import SubfigGrid
+from subfigplot.subfiggrid import SubfigGrid
 
 
 
